@@ -2,7 +2,7 @@ use itertools::Itertools;
 use pest::{iterators::Pair, Parser};
 use pest_derive::Parser;
 use range::Bounds;
-use std::fmt::Display;
+use std::{collections::BTreeSet, fmt::Display, fs};
 use thiserror::Error;
 mod range;
 pub mod token;
@@ -33,21 +33,29 @@ pub struct Mode {
 pub struct SwhkdParser {
     pub bindings: Vec<Binding>,
     pub unbinds: Vec<Definition>,
-    pub imports: Vec<String>,
+    pub imports: BTreeSet<String>,
     pub modes: Vec<Mode>,
 }
 
 impl SwhkdParser {
     pub fn from(raw: &str) -> Result<Self, ParseError> {
+        let mut root_imports = BTreeSet::new();
+        let mut root = Self::as_import(raw, &mut root_imports)?;
+        root.imports = root_imports;
+        Ok(root)
+    }
+    pub fn as_import(raw: &str, seen: &mut BTreeSet<String>) -> Result<Self, ParseError> {
         let parse_result = SwhkdGrammar::parse(Rule::main, raw)
             .map_err(|err| ParseError::Grammar(Box::new(err)))?;
+        // TODO: set the source for raw strings as `anonymous`
+
         let Some(contents) = parse_result.into_iter().next() else {
             return Err(ParseError::MainSection);
         };
 
         let mut bindings = vec![];
         let mut unbinds = vec![];
-        let mut imports = vec![];
+        let mut imports = BTreeSet::new();
         let mut modes = vec![];
         for decl in contents.into_inner() {
             match decl.as_rule() {
@@ -60,6 +68,20 @@ impl SwhkdParser {
                 Rule::EOI => {}
                 _ => unreachable!(),
             }
+        }
+
+        while let Some(import) = imports.pop_first() {
+            if seen.contains(&import) {
+                continue;
+            }
+            seen.insert(import.clone());
+            // TODO: use mmap here
+            let contents = fs::read_to_string(&import).unwrap();
+            let sw = Self::as_import(&contents, seen)?;
+            imports.extend(sw.imports);
+            bindings.extend(sw.bindings);
+            unbinds.extend(sw.unbinds);
+            modes.extend(sw.modes);
         }
         Ok(SwhkdParser {
             bindings,

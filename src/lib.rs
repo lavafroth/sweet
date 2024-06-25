@@ -2,7 +2,7 @@ use itertools::Itertools;
 use pest::{iterators::Pair, Parser};
 use pest_derive::Parser;
 use range::Bounds;
-use std::{collections::BTreeSet, fmt::Display, fs};
+use std::{collections::BTreeSet, fmt::Display, fs, path::Path};
 use thiserror::Error;
 mod range;
 pub mod token;
@@ -16,6 +16,8 @@ pub enum ParseError {
     Grammar(#[from] Box<pest::error::Error<Rule>>),
     #[error("hotkey config must contain one and only one main section")]
     MainSection,
+    #[error("unable to read config file")]
+    ReadingConfig(#[from] std::io::Error),
 }
 
 #[derive(Parser)]
@@ -37,17 +39,28 @@ pub struct SwhkdParser {
     pub modes: Vec<Mode>,
 }
 
+/// Input to the grammar parser.
+/// Can be either a string or a path.
+pub enum ParserInput<'a> {
+    Raw(&'a str),
+    Path(&'a Path),
+}
+
 impl SwhkdParser {
-    pub fn from(raw: &str) -> Result<Self, ParseError> {
+    pub fn from(input: ParserInput) -> Result<Self, ParseError> {
         let mut root_imports = BTreeSet::new();
-        let mut root = Self::as_import(raw, &mut root_imports)?;
+        let mut root = Self::as_import(input, &mut root_imports)?;
         root.imports = root_imports;
         Ok(root)
     }
-    pub fn as_import(raw: &str, seen: &mut BTreeSet<String>) -> Result<Self, ParseError> {
-        let parse_result = SwhkdGrammar::parse(Rule::main, raw)
-            .map_err(|err| ParseError::Grammar(Box::new(err)))?;
-        // TODO: set the source for raw strings as `anonymous`
+    fn as_import(input: ParserInput, seen: &mut BTreeSet<String>) -> Result<Self, ParseError> {
+        let (raw, source) = match input {
+            ParserInput::Raw(s) => (s.to_string(), "<anonymous>"),
+            // TODO: Use mmap instead of fs::read_to_string
+            ParserInput::Path(p) => (fs::read_to_string(p)?, p.to_str().unwrap_or_default()),
+        };
+        let parse_result = SwhkdGrammar::parse(Rule::main, &raw)
+            .map_err(|err| ParseError::Grammar(Box::new(err.with_path(source))))?;
 
         let Some(contents) = parse_result.into_iter().next() else {
             return Err(ParseError::MainSection);
@@ -75,13 +88,11 @@ impl SwhkdParser {
                 continue;
             }
             seen.insert(import.clone());
-            // TODO: use mmap here
-            let contents = fs::read_to_string(&import).unwrap();
-            let sw = Self::as_import(&contents, seen)?;
-            imports.extend(sw.imports);
-            bindings.extend(sw.bindings);
-            unbinds.extend(sw.unbinds);
-            modes.extend(sw.modes);
+            let child = Self::as_import(ParserInput::Path(Path::new(&import)), seen)?;
+            imports.extend(child.imports);
+            bindings.extend(child.bindings);
+            unbinds.extend(child.unbinds);
+            modes.extend(child.modes);
         }
         Ok(SwhkdParser {
             bindings,

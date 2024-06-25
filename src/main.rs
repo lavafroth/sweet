@@ -1,13 +1,12 @@
 use anyhow::{bail, Result};
-use std::fs;
-use sweet::SwhkdParser;
+use std::path::Path;
+use sweet::{ParserInput, SwhkdParser};
 
 fn main() -> Result<()> {
     let Some(arg) = std::env::args().nth(1) else {
         bail!("please supply a path to a hotkeys config file");
     };
-    let raw_content = fs::read_to_string(arg)?;
-    let parser = SwhkdParser::from(&raw_content)?;
+    let parser = SwhkdParser::from(ParserInput::Path(Path::new(&arg)))?;
 
     for binding in parser.bindings {
         println!("{}", binding);

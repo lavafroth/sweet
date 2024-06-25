@@ -1,6 +1,6 @@
 use sweet::{
     token::{Key, KeyAttribute, Modifier},
-    Binding, Definition, ParseError, SwhkdParser,
+    Binding, Definition, ParseError, ParserInput, SwhkdParser,
 };
 
 #[test]
@@ -9,7 +9,7 @@ fn test_basic_keybind() -> Result<(), ParseError> {
 r
     alacritty
             ";
-    SwhkdParser::from(&contents)?;
+    SwhkdParser::from(ParserInput::Raw(&contents))?;
     Ok(())
 }
 
@@ -25,7 +25,7 @@ w
 t
     /bin/firefox
         ";
-    let parsed = SwhkdParser::from(&contents)?;
+    let parsed = SwhkdParser::from(ParserInput::Raw(&contents))?;
 
     let known = vec![
         Binding {
@@ -68,7 +68,7 @@ w
 #t
     #/bin/firefox
         ";
-    let parsed = SwhkdParser::from(&contents)?;
+    let parsed = SwhkdParser::from(ParserInput::Raw(&contents))?;
 
     let known = vec![
         Binding {
@@ -99,7 +99,7 @@ super + 5
     alacritty
         ";
 
-    let parsed = SwhkdParser::from(&contents)?;
+    let parsed = SwhkdParser::from(ParserInput::Raw(&contents))?;
     let known = vec![Binding {
         definition: Definition {
             modifiers: vec![Modifier("super".to_string())],
@@ -120,7 +120,7 @@ shift + k + m
     notify-send 'Hello world!'
             ";
 
-    assert!(SwhkdParser::from(&contents).is_err());
+    assert!(SwhkdParser::from(ParserInput::Raw(&contents)).is_err());
 }
 
 #[test]
@@ -130,7 +130,7 @@ shift + k + alt
     notify-send 'Hello world!'
             ";
 
-    assert!(SwhkdParser::from(&contents).is_err());
+    assert!(SwhkdParser::from(ParserInput::Raw(&contents)).is_err());
 }
 
 #[test]
@@ -141,7 +141,7 @@ fn test_unfinished_plus_sign() {
 shift + alt +
     notify-send 'Hello world!'
             ";
-    assert!(SwhkdParser::from(&contents).is_err());
+    assert!(SwhkdParser::from(ParserInput::Raw(&contents)).is_err());
 }
 
 #[test]
@@ -151,7 +151,7 @@ fn test_plus_sign_at_start() {
     notify-send 'Hello world!'
             ";
 
-    assert!(SwhkdParser::from(&contents).is_err());
+    assert!(SwhkdParser::from(ParserInput::Raw(&contents)).is_err());
 }
 
 #[test]
@@ -172,7 +172,7 @@ altgr + i
 super + z
     notify-send 'Hello world!'
             ";
-    let parsed = SwhkdParser::from(&contents)?;
+    let parsed = SwhkdParser::from(ParserInput::Raw(&contents))?;
 
     let command = "notify-send 'Hello world!'".to_string();
     let known = vec![
@@ -224,7 +224,7 @@ fn test_command_with_many_spaces() -> Result<(), ParseError> {
 p
     xbacklight -inc 10 -fps 30 -time 200
         ";
-    let parsed = SwhkdParser::from(&contents)?;
+    let parsed = SwhkdParser::from(ParserInput::Raw(&contents))?;
 
     let known = vec![Binding {
         definition: Definition {
@@ -249,7 +249,7 @@ pesto
     xterm
                     ";
 
-    assert!(SwhkdParser::from(&contents).is_err());
+    assert!(SwhkdParser::from(ParserInput::Raw(&contents)).is_err());
 }
 
 #[test]
@@ -264,7 +264,7 @@ w
 
                     ";
 
-    assert!(SwhkdParser::from(&contents).is_err());
+    assert!(SwhkdParser::from(ParserInput::Raw(&contents)).is_err());
 }
 
 #[test]
@@ -292,7 +292,7 @@ ctrl + 0
 super + minus
     play-song.sh album
                     ";
-    let parsed = SwhkdParser::from(&contents)?;
+    let parsed = SwhkdParser::from(ParserInput::Raw(&contents))?;
 
     let known = vec![
         Binding {
@@ -352,7 +352,7 @@ k
     mpc ls | dmenu | \\
     sed -i 's/foo/bar/g'
                     ";
-    let parsed = SwhkdParser::from(&contents)?;
+    let parsed = SwhkdParser::from(ParserInput::Raw(&contents))?;
 
     let known = vec![Binding {
         definition: Definition {

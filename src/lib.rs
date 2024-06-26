@@ -26,10 +26,11 @@ pub struct SwhkdGrammar;
 
 #[derive(Default, Debug)]
 pub struct Mode {
-    name: String,
-    oneoff: bool,
-    swallow: bool,
-    bindings: Vec<Binding>,
+    pub name: String,
+    pub oneoff: bool,
+    pub swallow: bool,
+    pub bindings: Vec<Binding>,
+    pub unbinds: Vec<Definition>,
 }
 
 pub struct SwhkdParser {
@@ -255,6 +256,7 @@ fn mode_parser(pair: Pair<'_, Rule>) -> Result<Mode, ParseError> {
         match component.as_rule() {
             Rule::modename => mode.name = component.as_str().to_string(),
             Rule::binding => mode.bindings.extend(binding_parser(component)?),
+            Rule::unbind => mode.unbinds.extend(unbind_parser(component)?),
             Rule::oneoff => mode.oneoff = true,
             Rule::swallow => mode.swallow = true,
             _ => {}

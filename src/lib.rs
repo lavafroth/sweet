@@ -2,7 +2,12 @@ use itertools::Itertools;
 use pest::{iterators::Pair, Parser};
 use pest_derive::Parser;
 use range::Bounds;
-use std::{collections::BTreeSet, fmt::Display, fs, path::Path};
+use std::{
+    collections::BTreeSet,
+    fmt::Display,
+    fs,
+    path::{Path, PathBuf},
+};
 use thiserror::Error;
 mod range;
 pub mod token;
@@ -16,8 +21,8 @@ pub enum ParseError {
     Grammar(#[from] Box<pest::error::Error<Rule>>),
     #[error("hotkey config must contain one and only one main section")]
     MainSection,
-    #[error("unable to read config file")]
-    ReadingConfig(#[from] std::io::Error),
+    #[error(transparent)]
+    ConfigRead(#[from] ConfigReadError),
 }
 
 #[derive(Parser)]
@@ -47,6 +52,23 @@ pub enum ParserInput<'a> {
     Path(&'a Path),
 }
 
+#[derive(Debug, Error)]
+pub enum ConfigReadError {
+    #[error("unable to read config file")]
+    ReadingConfig(#[from] std::io::Error),
+    #[error("path `{0}` supplied as config is not a regular file")]
+    NotRegularFile(PathBuf),
+}
+
+pub fn read_config<P: AsRef<Path>>(path: P) -> Result<String, ConfigReadError> {
+    let path = path.as_ref();
+    let stat = fs::metadata(path)?;
+    if !stat.is_file() {
+        return Err(ConfigReadError::NotRegularFile(path.to_path_buf()));
+    }
+    Ok(fs::read_to_string(path)?)
+}
+
 impl SwhkdParser {
     pub fn from(input: ParserInput) -> Result<Self, ParseError> {
         let mut root_imports = BTreeSet::new();
@@ -58,7 +80,7 @@ impl SwhkdParser {
         let (raw, source) = match input {
             ParserInput::Raw(s) => (s.to_string(), "<anonymous>"),
             // TODO: Use mmap instead of fs::read_to_string
-            ParserInput::Path(p) => (fs::read_to_string(p)?, p.to_str().unwrap_or_default()),
+            ParserInput::Path(p) => (read_config(p)?, p.to_str().unwrap_or_default()),
         };
         let parse_result = SwhkdGrammar::parse(Rule::main, &raw)
             .map_err(|err| ParseError::Grammar(Box::new(err.with_path(source))))?;

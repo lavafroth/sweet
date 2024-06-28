@@ -6,6 +6,7 @@ use std::{
     collections::BTreeSet,
     fmt::Display,
     fs,
+    os::unix::fs::MetadataExt,
     path::{Path, PathBuf},
 };
 use thiserror::Error;
@@ -58,6 +59,8 @@ pub enum ConfigReadError {
     ReadingConfig(#[from] std::io::Error),
     #[error("path `{0}` supplied as config is not a regular file")]
     NotRegularFile(PathBuf),
+    #[error("the supplied config file {0} size exceeds the 50MiB limit")]
+    TooLarge(PathBuf),
 }
 
 pub fn read_config<P: AsRef<Path>>(path: P) -> Result<String, ConfigReadError> {
@@ -65,6 +68,11 @@ pub fn read_config<P: AsRef<Path>>(path: P) -> Result<String, ConfigReadError> {
     let stat = fs::metadata(path)?;
     if !stat.is_file() {
         return Err(ConfigReadError::NotRegularFile(path.to_path_buf()));
+    }
+    let size = stat.size();
+    /* 50MiB size cap */
+    if size > (50 << 20) {
+        return Err(ConfigReadError::TooLarge(path.to_path_buf()));
     }
     Ok(fs::read_to_string(path)?)
 }

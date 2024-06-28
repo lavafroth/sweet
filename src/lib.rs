@@ -184,7 +184,9 @@ fn parse_key(component: Pair<'_, Rule>) -> Key {
         match inner.as_rule() {
             Rule::send => attribute |= KeyAttribute::Send,
             Rule::on_release => attribute |= KeyAttribute::OnRelease,
-            Rule::shorthand_allow | Rule::key_base => key = unescape(inner.as_str()).to_string(),
+            Rule::shorthand_allow | Rule::key_base => {
+                key = unescape(&inner.as_str().to_lowercase()).to_string()
+            }
             _ => {}
         }
     }
@@ -202,7 +204,7 @@ impl DefinitionUncompiled {
         match component.as_rule() {
             Rule::modifier => self
                 .modifiers
-                .push(vec![Modifier(pair_to_string(component))]),
+                .push(vec![Modifier(pair_to_string(component).to_lowercase())]),
             Rule::modifier_shorthand | Rule::modifier_omit_shorthand => self.modifiers.push(
                 component
                     .into_inner()

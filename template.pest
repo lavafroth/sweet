@@ -167,11 +167,17 @@ command_component_and = _{ WHITESPACE* ~ "," ~ WHITESPACE* ~ (range | command_co
 inside_braces      = _{ (command_component ~ command_component_and+) | (range ~ command_component_and*) }
 command_shorthand =  { "{" ~ inside_braces ~ "}" }
 
+command_double_ampersand = { " && " }
+
 // make sure that a standalone part of a command does not overlap with
 // parts inside braces
-command_standalone = { (!shorthand_bounds ~ not_newline)+ }
 
-command_line = _{ (command_shorthand | command_standalone)* }
+command_standalone = { (!shorthand_bounds ~ !command_double_ampersand ~ not_newline)+ }
+command_chunk = _{command_shorthand | command_standalone}
+enter_mode = { "@enter" ~ WHITESPACE ~ modename ~ WHITESPACE }
+escape_mode = { "@escape" ~ WHITESPACE }
+command_chunk_maybe_with_mode = _{(enter_mode | escape_mode)? ~ command_chunk*}
+command_line = _{ command_chunk_maybe_with_mode ~ (command_double_ampersand ~ command_chunk_maybe_with_mode)* }
 
 // We use a WHITESPACE+ in the trailing matcher to automatically trim whitespaces (and tabs) from
 // multiline commands. ---------------------------------------------v
@@ -203,7 +209,7 @@ import      = { "include" ~ import_file }
 
 oneoff              =  { "oneoff" }
 swallow             =  { "swallow" }
-modename_characters = _{ !NEWLINE ~ !(oneoff | swallow) ~ ANY }
+modename_characters = _{ !NEWLINE ~ !(oneoff | swallow | command_double_ampersand) ~ !WHITESPACE ~ ANY }
 modename            =  { modename_characters+ }
 primitives          = _{ comment | unbind | binding }
 

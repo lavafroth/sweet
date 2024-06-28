@@ -10,9 +10,11 @@ use std::{
     path::{Path, PathBuf},
 };
 use thiserror::Error;
+use token::{KeyRepr, Modifier};
+mod evdev_mappings;
 mod range;
 pub mod token;
-use crate::token::{Key, KeyAttribute, Modifier};
+use crate::token::{Key, KeyAttribute, ModifierRepr};
 
 #[derive(Debug, Error)]
 pub enum ParseError {
@@ -24,6 +26,8 @@ pub enum ParseError {
     MainSection,
     #[error(transparent)]
     ConfigRead(#[from] ConfigReadError),
+    #[error("`{0}` is not recongnized as a valid evdev key")]
+    InvalidKey(String),
 }
 
 #[derive(Parser)]
@@ -177,7 +181,7 @@ fn unescape(s: &str) -> &str {
     &s[1..]
 }
 
-fn parse_key(component: Pair<'_, Rule>) -> Key {
+fn parse_key(component: Pair<'_, Rule>) -> KeyRepr {
     let mut attribute = KeyAttribute::None;
     let mut key = String::default();
     for inner in component.into_inner() {
@@ -190,7 +194,7 @@ fn parse_key(component: Pair<'_, Rule>) -> Key {
             _ => {}
         }
     }
-    Key { key, attribute }
+    KeyRepr { key, attribute }
 }
 
 #[derive(Default)]
@@ -202,32 +206,42 @@ pub struct DefinitionUncompiled {
 impl DefinitionUncompiled {
     fn ingest(&mut self, component: Pair<'_, Rule>) -> Result<(), ParseError> {
         match component.as_rule() {
-            Rule::modifier => self
-                .modifiers
-                .push(vec![Modifier(pair_to_string(component).to_lowercase())]),
+            Rule::modifier => {
+                self.modifiers.push(vec![
+                    ModifierRepr(pair_to_string(component).to_lowercase()).into()
+                ])
+            }
             Rule::modifier_shorthand | Rule::modifier_omit_shorthand => self.modifiers.push(
                 component
                     .into_inner()
-                    .map(|component| Modifier(pair_to_string(component)))
+                    .map(|component| ModifierRepr(pair_to_string(component)).into())
                     .collect(),
             ),
             Rule::shorthand => {
                 for shorthand_component in component.into_inner() {
                     match shorthand_component.as_rule() {
-                        Rule::key_in_shorthand => self.keys.push(parse_key(shorthand_component)),
+                        Rule::key_in_shorthand => {
+                            self.keys.push(parse_key(shorthand_component).try_into()?)
+                        }
                         Rule::key_range => {
                             let (lower_bound, upper_bound) =
                                 Bounds::new(shorthand_component).expand_keys()?;
-                            self.keys.extend((lower_bound..=upper_bound).map(|key| Key {
-                                key: key.to_string(),
-                                attribute: KeyAttribute::None,
-                            }));
+                            let keys = (lower_bound..=upper_bound)
+                                .map(|key| {
+                                    KeyRepr {
+                                        key: key.to_string(),
+                                        attribute: KeyAttribute::None,
+                                    }
+                                    .try_into()
+                                })
+                                .collect::<Result<Vec<Key>, ParseError>>()?;
+                            self.keys.extend(keys);
                         }
                         _ => {}
                     }
                 }
             }
-            Rule::key_normal => self.keys.push(parse_key(component)),
+            Rule::key_normal => self.keys.push(parse_key(component).try_into()?),
             _ => {}
         };
         Ok(())

@@ -31,21 +31,21 @@ t
         Binding {
             definition: Definition {
                 modifiers: vec![],
-                key: Key::new("r", KeyAttribute::None),
+                key: Key::new(evdev::Key::KEY_R, KeyAttribute::None),
             },
             command: "alacritty".to_string().to_string(),
         },
         Binding {
             definition: Definition {
                 modifiers: vec![],
-                key: Key::new("w", KeyAttribute::None),
+                key: Key::new(evdev::Key::KEY_W, KeyAttribute::None),
             },
             command: "kitty".to_string().to_string(),
         },
         Binding {
             definition: Definition {
                 modifiers: vec![],
-                key: Key::new("t", KeyAttribute::None),
+                key: Key::new(evdev::Key::KEY_T, KeyAttribute::None),
             },
             command: "/bin/firefox".to_string().to_string(),
         },
@@ -74,14 +74,14 @@ w
         Binding {
             definition: Definition {
                 modifiers: vec![],
-                key: Key::new("r", KeyAttribute::None),
+                key: Key::new(evdev::Key::KEY_R, KeyAttribute::None),
             },
             command: "alacritty".to_string().to_string(),
         },
         Binding {
             definition: Definition {
                 modifiers: vec![],
-                key: Key::new("w", KeyAttribute::None),
+                key: Key::new(evdev::Key::KEY_W, KeyAttribute::None),
             },
             command: "kitty".to_string().to_string(),
         },
@@ -102,8 +102,8 @@ super + 5
     let parsed = SwhkdParser::from(ParserInput::Raw(&contents))?;
     let known = vec![Binding {
         definition: Definition {
-            modifiers: vec![Modifier("super".to_string())],
-            key: Key::new("5", KeyAttribute::None),
+            modifiers: vec![Modifier::Super],
+            key: Key::new(evdev::Key::KEY_5, KeyAttribute::None),
         },
         command: "alacritty".to_string().to_string(),
     }];
@@ -178,36 +178,36 @@ super + z
     let known = vec![
         Binding {
             definition: Definition {
-                modifiers: vec![Modifier("shift".to_string())],
-                key: Key::new("k", KeyAttribute::None),
+                modifiers: vec![Modifier::Shift],
+                key: Key::new(evdev::Key::KEY_K, KeyAttribute::None),
             },
             command: command.clone(),
         },
         Binding {
             definition: Definition {
-                modifiers: vec![Modifier("control".to_string())],
-                key: Key::new("5", KeyAttribute::None),
+                modifiers: vec![Modifier::Control],
+                key: Key::new(evdev::Key::KEY_5, KeyAttribute::None),
             },
             command: command.clone(),
         },
         Binding {
             definition: Definition {
-                modifiers: vec![Modifier("alt".to_string())],
-                key: Key::new("2", KeyAttribute::None),
+                modifiers: vec![Modifier::Alt],
+                key: Key::new(evdev::Key::KEY_2, KeyAttribute::None),
             },
             command: command.clone(),
         },
         Binding {
             definition: Definition {
-                modifiers: vec![Modifier("altgr".to_string())],
-                key: Key::new("i", KeyAttribute::None),
+                modifiers: vec![Modifier::Altgr],
+                key: Key::new(evdev::Key::KEY_I, KeyAttribute::None),
             },
             command: command.clone(),
         },
         Binding {
             definition: Definition {
-                modifiers: vec![Modifier("super".to_string())],
-                key: Key::new("z", KeyAttribute::None),
+                modifiers: vec![Modifier::Super],
+                key: Key::new(evdev::Key::KEY_Z, KeyAttribute::None),
             },
             command: command.clone(),
         },
@@ -229,7 +229,7 @@ p
     let known = vec![Binding {
         definition: Definition {
             modifiers: vec![],
-            key: Key::new("p", KeyAttribute::None),
+            key: Key::new(evdev::Key::KEY_P, KeyAttribute::None),
         },
         command: String::from("xbacklight -inc 10 -fps 30 -time 200"),
     }];
@@ -297,15 +297,15 @@ super + minus
     let known = vec![
         Binding {
             definition: Definition {
-                modifiers: vec![Modifier("super".to_string())],
-                key: Key::new("Escape", KeyAttribute::None),
+                modifiers: vec![Modifier::Super],
+                key: Key::new(evdev::Key::KEY_ESC, KeyAttribute::None),
             },
             command: String::from("pkill -USR1 -x sxhkd ; sxhkd &"),
         },
         Binding {
             definition: Definition {
-                modifiers: vec![Modifier("super".to_string())],
-                key: Key::new("Return", KeyAttribute::None),
+                modifiers: vec![Modifier::Super],
+                key: Key::new(evdev::Key::KEY_ENTER, KeyAttribute::None),
             },
             command: String::from(
                 "alacritty -t \"Terminal\" -e \"$HOME/.config/sxhkd/new_tmux_terminal.sh\"",
@@ -313,29 +313,29 @@ super + minus
         },
         Binding {
             definition: Definition {
-                modifiers: vec![Modifier("super".to_string()), Modifier("shift".to_string())],
-                key: Key::new("Return", KeyAttribute::None),
+                modifiers: vec![Modifier::Super, Modifier::Shift],
+                key: Key::new(evdev::Key::KEY_ENTER, KeyAttribute::None),
             },
             command: String::from("alacritty -t \"Terminal\""),
         },
         Binding {
             definition: Definition {
-                modifiers: vec![Modifier("alt".to_string())],
-                key: Key::new("Return", KeyAttribute::None),
+                modifiers: vec![Modifier::Alt],
+                key: Key::new(evdev::Key::KEY_ENTER, KeyAttribute::None),
             },
             command: String::from("alacritty -t \"Terminal\" -e \"tmux\""),
         },
         Binding {
             definition: Definition {
-                modifiers: vec![Modifier("ctrl".to_string())],
-                key: Key::new("0", KeyAttribute::None),
+                modifiers: vec![Modifier::Control],
+                key: Key::new(evdev::Key::KEY_0, KeyAttribute::None),
             },
             command: String::from("play-song.sh"),
         },
         Binding {
             definition: Definition {
-                modifiers: vec![Modifier("super".to_string())],
-                key: Key::new("minus", KeyAttribute::None),
+                modifiers: vec![Modifier::Super],
+                key: Key::new(evdev::Key::KEY_MINUS, KeyAttribute::None),
             },
             command: String::from("play-song.sh album"),
         },
@@ -357,7 +357,7 @@ k
     let known = vec![Binding {
         definition: Definition {
             modifiers: vec![],
-            key: Key::new("k", KeyAttribute::None),
+            key: Key::new(evdev::Key::KEY_K, KeyAttribute::None),
         },
         command: String::from("mpc ls | dmenu | sed -i 's/foo/bar/g'"),
     }];

@@ -1,3 +1,7 @@
+use crate::ParseError;
+
+use crate::evdev_mappings;
+
 bitflags::bitflags! {
     #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
     pub struct KeyAttribute: u8 {
@@ -9,18 +13,60 @@ bitflags::bitflags! {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Modifier(pub String);
+pub struct ModifierRepr(pub String);
+
+#[derive(Debug, PartialEq, Eq, Copy, Clone, Hash)]
+pub enum Modifier {
+    Super,
+    Alt,
+    Altgr,
+    Control,
+    Shift,
+    Any,
+}
+
+impl From<ModifierRepr> for Modifier {
+    fn from(value: ModifierRepr) -> Self {
+        match value.0.to_lowercase().as_str() {
+            "ctrl" => Modifier::Control,
+            "control" => Modifier::Control,
+            "super" | "mod4" | "meta" => Modifier::Super,
+            "alt" => Modifier::Alt,
+            "mod1" => Modifier::Alt,
+            "altgr" => Modifier::Altgr,
+            "mod5" => Modifier::Altgr,
+            "shift" => Modifier::Shift,
+            "any" => Modifier::Any,
+            _ => panic!("that's not a modifier"),
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Key {
-    pub key: String,
+    pub key: evdev::Key,
     pub attribute: KeyAttribute,
 }
 
 impl Key {
-    pub fn new<S: AsRef<str>>(key: S, attribute: KeyAttribute) -> Self {
-        Self {
-            key: key.as_ref().to_owned(),
-            attribute,
-        }
+    pub fn new(key: evdev::Key, attribute: KeyAttribute) -> Self {
+        Self { key, attribute }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct KeyRepr {
+    pub key: String,
+    pub attribute: KeyAttribute,
+}
+
+impl TryFrom<KeyRepr> for Key {
+    type Error = ParseError;
+
+    fn try_from(value: KeyRepr) -> Result<Self, Self::Error> {
+        let key = evdev_mappings::convert(&value.key)?;
+        let attribute = value.attribute;
+
+        Ok(Self { key, attribute })
     }
 }

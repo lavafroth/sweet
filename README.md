@@ -38,7 +38,7 @@ Here's what has been worked on so far.
 - [x] Warn user if input config is not a regular file
 - [x] Set a maximum file size cap for configs
 - [ ] Lock files and map them into memory
-- [ ] Map keys and modifiers to internal representation (evdev enum variants) in a single pass
+- [x] Map keys and modifiers to internal representation (evdev enum variants) in a single pass
 
 
 Want to learn how the code works? Check out [my blog](https://lavafroth.is-a.dev/tags/google-summer-of-code/) where I cover each topic as I implement them.

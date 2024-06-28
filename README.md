@@ -27,11 +27,12 @@ Here's what has been worked on so far.
 - [x] Modes
   - [x] Oneoff
   - [x] Swallow
+  - [ ] `@mode` in commands
 - [x] Comments
 - [x] Imports
-  - [x] Merge bindings from all imports
+  - [x] Merge definitions from all imports
 - [ ] Tests (WIP)
-- [ ] Integration into downstream (WIP)
+- [ ] Integration into downstream [WIP](https://github.com/lavafroth/swhkd/tree/sweet-integration)
 
 ## Extra features
 - [x] Warn user if input config is not a regular file

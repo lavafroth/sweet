@@ -74,6 +74,7 @@ pub fn read_config<P: AsRef<Path>>(path: P) -> Result<String, ConfigReadError> {
     if size > (50 << 20) {
         return Err(ConfigReadError::TooLarge(path.to_path_buf()));
     }
+    // TODO: Use mmap instead of fs::read_to_string
     Ok(fs::read_to_string(path)?)
 }
 
@@ -86,8 +87,8 @@ impl SwhkdParser {
     }
     fn as_import(input: ParserInput, seen: &mut BTreeSet<String>) -> Result<Self, ParseError> {
         let (raw, source) = match input {
+            // If a config is loaded from a string instead of a path, name it `<anonymous>`
             ParserInput::Raw(s) => (s.to_string(), "<anonymous>"),
-            // TODO: Use mmap instead of fs::read_to_string
             ParserInput::Path(p) => (read_config(p)?, p.to_str().unwrap_or_default()),
         };
         let parse_result = SwhkdGrammar::parse(Rule::main, &raw)

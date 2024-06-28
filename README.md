@@ -28,12 +28,21 @@ Here's what has been worked on so far.
   - [x] Oneoff
   - [x] Swallow
 - [x] Comments
+- [x] Imports
+  - [x] Merge bindings from all imports
 - [ ] Tests (WIP)
-- [ ] Integration into downstream
+- [ ] Integration into downstream (WIP)
+
+## Extra features
+- [x] Warn user if input config is not a regular file
+- [ ] Set a maximum file size cap for configs
+- [ ] Lock files and map them into memory
+- [ ] Map keys and modifiers to internal representation (evdev enum variants) in a single pass
+
 
 Want to learn how the code works? Check out [my blog](https://lavafroth.is-a.dev/tags/google-summer-of-code/) where I cover each topic as I implement them.
 
-### How to test it out?
+### See it in action
 
 All the examples that are currently tested against are piled up in the
 `hotkeys.swhkd` file. These are to be ported to actual cargo tests.

@@ -1,15 +1,21 @@
-mode lol
+mode minimal
 	{super, alt} + {ctrl, shift} + {a, b}
 		{librewolf, firefox} {spoiderman, betmen} {play, pause}
 endmode
+
+super + @a
+	echo "🏫" && @enter minimal && notify-send "entering zen mode"
+
+super + g
+	echo "🏫" &&\
+	@enter minimal&& notify-send "entering gen mode"
+
 include ./modules/other.swhkd
 ignore {super, alt} + {ctrl, shift} + {a, b}
 
 super + {p, \, , \-, \\, r}
 	{a, b, c, d, e}
 
-super + @a
-	echo "🏫"
 
 super + {@a-@l}
    lol {a-l}

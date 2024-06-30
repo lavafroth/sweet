@@ -1,133 +1,137 @@
 modifier = {
     ^"altgr"
-    | ^"alt"
-    | ^"control"
-    | ^"ctrl"
-    | ^"mod1"
-    | ^"mod4"
-    | ^"mod5"
-    | ^"shift"
-    | ^"super"
-    | ^"any"
+  | ^"alt"
+  | ^"control"
+  | ^"ctrl"
+  | ^"mod1"
+  | ^"mod4"
+  | ^"mod5"
+  | ^"shift"
+  | ^"super"
+  | ^"any"
 }
 
 keys_always_escaped = _{ "\\~" | "\\@" | "\\+" | "\\\\" }
-key_base = { keys_always_escaped | ^"enter" | ^"return" |
-        ^"escape" |
-        ^"backspace" |
-        ^"capslock" |
-        ^"return" |
-        ^"enter" |
-        ^"tab" |
-        ^"space" |
-        ^"plus" |
-        ^"kp0" |
-        ^"kp1" |
-        ^"kp2" |
-        ^"kp3" |
-        ^"kp4" |
-        ^"kp5" |
-        ^"kp6" |
-        ^"kp7" |
-        ^"kp8" |
-        ^"kp9" |
-        ^"kpasterisk" |
-        ^"kpcomma" |
-        ^"kpdot" |
-        ^"kpenter" |
-        ^"kpequal" |
-        ^"kpjpcomma" |
-        ^"kpleftparen" |
-        ^"kpminus" |
-        ^"kpplusminus" |
-        ^"kprightparen" |
-        ^"minus" |
-        ^"-" |
-        ^"equal" |
-        ^"=" |
-        ^"grave" |
-        ^"`" |
-        ^"print" |
-        ^"volumeup" |
-        ^"xf86audioraisevolume" |
-        ^"volumedown" |
-        ^"xf86audiolowervolume" |
-        ^"mute" |
-        ^"xf86audiomute" |
-        ^"brightnessup" |
-        ^"xf86monbrightnessup" |
-        ^"brightnessdown" |
-        ^"xf86audiomedia" |
-        ^"xf86audiomicmute" |
-        ^"micmute" |
-        ^"xf86audionext" |
-        ^"xf86audioplay" |
-        ^"xf86audioprev" |
-        ^"xf86audiostop" |
-        ^"xf86monbrightnessdown" |
-        ^"," |
-        ^"comma" |
-        ^"." |
-        ^"dot" |
-        ^"period" |
-        ^"/" |
-        ^"question" |
-        ^"slash" |
-        ^"backslash" |
-        ^"leftbrace" |
-        ^"[" |
-        ^"bracketleft" |
-        ^"rightbrace" |
-        ^"]" |
-        ^"bracketright" |
-        ^";" |
-        ^"scroll_lock" |
-        ^"semicolon" |
-        ^"'" |
-        ^"apostrophe" |
-        ^"left" |
-        ^"right" |
-        ^"up" |
-        ^"down" |
-        ^"pause" |
-        ^"home" |
-        ^"delete" |
-        ^"insert" |
-        ^"end" |
-        ^"pause" |
-        ^"prior" |
-        ^"next" |
-        ^"pagedown" |
-        ^"pageup" |
-        ^"f1" |
-        ^"f2" |
-        ^"f3" |
-        ^"f4" |
-        ^"f5" |
-        ^"f6" |
-        ^"f7" |
-        ^"f8" |
-        ^"f9" |
-        ^"f10" |
-        ^"f11" |
-        ^"f12" |
-        ^"f13" |
-        ^"f14" |
-        ^"f15" |
-        ^"f16" |
-        ^"f17" |
-        ^"f18" |
-        ^"f19" |
-        ^"f20" |
-        ^"f21" |
-        ^"f22" |
-        ^"f23" |
-        ^"f24" | ASCII_ALPHANUMERIC 
+key_base            =  {
+    keys_always_escaped
+  | ^"enter"
+  | ^"return"
+  | ^"escape"
+  | ^"backspace"
+  | ^"capslock"
+  | ^"return"
+  | ^"enter"
+  | ^"tab"
+  | ^"space"
+  | ^"plus"
+  | ^"kp0"
+  | ^"kp1"
+  | ^"kp2"
+  | ^"kp3"
+  | ^"kp4"
+  | ^"kp5"
+  | ^"kp6"
+  | ^"kp7"
+  | ^"kp8"
+  | ^"kp9"
+  | ^"kpasterisk"
+  | ^"kpcomma"
+  | ^"kpdot"
+  | ^"kpenter"
+  | ^"kpequal"
+  | ^"kpjpcomma"
+  | ^"kpleftparen"
+  | ^"kpminus"
+  | ^"kpplusminus"
+  | ^"kprightparen"
+  | ^"minus"
+  | ^"-"
+  | ^"equal"
+  | ^"="
+  | ^"grave"
+  | ^"`"
+  | ^"print"
+  | ^"volumeup"
+  | ^"xf86audioraisevolume"
+  | ^"volumedown"
+  | ^"xf86audiolowervolume"
+  | ^"mute"
+  | ^"xf86audiomute"
+  | ^"brightnessup"
+  | ^"xf86monbrightnessup"
+  | ^"brightnessdown"
+  | ^"xf86audiomedia"
+  | ^"xf86audiomicmute"
+  | ^"micmute"
+  | ^"xf86audionext"
+  | ^"xf86audioplay"
+  | ^"xf86audioprev"
+  | ^"xf86audiostop"
+  | ^"xf86monbrightnessdown"
+  | ^","
+  | ^"comma"
+  | ^"."
+  | ^"dot"
+  | ^"period"
+  | ^"/"
+  | ^"question"
+  | ^"slash"
+  | ^"backslash"
+  | ^"leftbrace"
+  | ^"["
+  | ^"bracketleft"
+  | ^"rightbrace"
+  | ^"]"
+  | ^"bracketright"
+  | ^";"
+  | ^"scroll_lock"
+  | ^"semicolon"
+  | ^"'"
+  | ^"apostrophe"
+  | ^"left"
+  | ^"right"
+  | ^"up"
+  | ^"down"
+  | ^"pause"
+  | ^"home"
+  | ^"delete"
+  | ^"insert"
+  | ^"end"
+  | ^"pause"
+  | ^"prior"
+  | ^"next"
+  | ^"pagedown"
+  | ^"pageup"
+  | ^"f1"
+  | ^"f2"
+  | ^"f3"
+  | ^"f4"
+  | ^"f5"
+  | ^"f6"
+  | ^"f7"
+  | ^"f8"
+  | ^"f9"
+  | ^"f10"
+  | ^"f11"
+  | ^"f12"
+  | ^"f13"
+  | ^"f14"
+  | ^"f15"
+  | ^"f16"
+  | ^"f17"
+  | ^"f18"
+  | ^"f19"
+  | ^"f20"
+  | ^"f21"
+  | ^"f22"
+  | ^"f23"
+  | ^"f24"
+  | ASCII_ALPHANUMERIC
 }
 
-key_attributes = _{ send? ~ on_release? }
-key_normal =  { key_attributes ~ (key_base | "," | "-") }
-key_in_shorthand = { !shorthand_deny ~ key_attributes ~ (shorthand_allow | key_base) }
+key_attributes   = _{ send? ~ on_release? }
+key_normal       =  { key_attributes ~ (key_base | "," | "-") }
+key_in_shorthand =  { !shorthand_deny ~ key_attributes ~ (shorthand_allow | key_base) }
 
 send             =  { "~" }
 on_release       =  { "@" }
@@ -149,12 +153,12 @@ shorthand = {
 
 // no dashes accepted, no dashes needed
 // one would not expect the range "super-alt" to work anyway.
-modifier_shorthand    =  { "{" ~ (modifier ~ ",")+ ~ modifier ~ "}" }
+modifier_shorthand = { "{" ~ (modifier ~ ",")+ ~ modifier ~ "}" }
 
 omission                =  { "_" }
 modifier_omit           = _{ omission | (modifier ~ concat) }
 modifier_omit_shorthand =  { "{" ~ modifier_omit ~ ("," ~ modifier_omit)+ ~ "}" }
-modifier_or_shorthand                = _{ (modifier | modifier_shorthand) ~ concat }
+modifier_or_shorthand   = _{ (modifier | modifier_shorthand) ~ concat }
 
 comment = _{ WHITESPACE* ~ "#" ~ not_newline* }
 
@@ -164,31 +168,32 @@ visible_composite     =  { command_composite }
 range                 =  { visible_composite ~ WHITESPACE* ~ "-" ~ WHITESPACE* ~ visible_composite }
 command_component_and = _{ WHITESPACE* ~ "," ~ WHITESPACE* ~ (range | command_component) }
 
-inside_braces      = _{ (command_component ~ command_component_and+) | (range ~ command_component_and*) }
+inside_braces     = _{ (command_component ~ command_component_and+) | (range ~ command_component_and*) }
 command_shorthand =  { "{" ~ inside_braces ~ "}" }
 
-command_double_ampersand = { " && " }
+command_double_ampersand = { "&&" }
 
 // make sure that a standalone part of a command does not overlap with
 // parts inside braces
 
-command_standalone = { (!shorthand_bounds ~ !command_double_ampersand ~ not_newline)+ }
-command_chunk = _{command_shorthand | command_standalone}
-enter_mode = { "@enter" ~ WHITESPACE ~ modename ~ WHITESPACE }
-escape_mode = { "@escape" ~ WHITESPACE }
-command_chunk_maybe_with_mode = _{(enter_mode | escape_mode)? ~ command_chunk*}
-command_line = _{ command_chunk_maybe_with_mode ~ (command_double_ampersand ~ command_chunk_maybe_with_mode)* }
+command_standalone    =  { (!shorthand_bounds ~ !command_double_ampersand ~ not_newline)+ }
+command_chunk         = _{ command_shorthand | command_standalone }
+enter_mode            =  { "@enter" ~ WHITESPACE ~ modename }
+escape_mode           =  { "@escape" }
+mode_instruction      = _{ WHITESPACE? ~ (enter_mode | escape_mode) ~ WHITESPACE? }
+command_chunk_or_mode = _{ mode_instruction | (command_chunk*) }
+command_line          = _{ command_chunk_or_mode ~ (command_double_ampersand ~ command_chunk_or_mode)* }
 
 // We use a WHITESPACE+ in the trailing matcher to automatically trim whitespaces (and tabs) from
 // multiline commands. ---------------------------------------------v
 command = ${ NEWLINE ~ WHITESPACE+ ~ command_line ~ (escape_lf ~ WHITESPACE+ ~ command_line)* }
 // For example
-//
+// 
 // hello \
-//      world
-//
+// world
+// 
 // becomes "hello world"
-//
+// 
 // The dollar sign makes this atomic, this statement as well as anything
 // inside it must explicitly specify newlines and whitespaces.
 
@@ -197,9 +202,7 @@ trigger = _{ (modifier_or_shorthand | modifier_omit_shorthand)* ~ (key_normal | 
 maybe_some_lines_of_comments = { (NEWLINE ~ comment)* }
 
 binding = {
-    trigger ~ comment?
-    ~ maybe_some_lines_of_comments
-    ~ command
+    trigger ~ comment? ~ maybe_some_lines_of_comments ~ command
 }
 
 unbind = { "ignore" ~ trigger }
@@ -220,3 +223,4 @@ content = _{ comment | mode | unbind | binding | import | NEWLINE }
 main = {
     SOI ~ content* ~ EOI
 }
+

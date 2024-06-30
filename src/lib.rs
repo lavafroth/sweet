@@ -160,10 +160,15 @@ impl Display for Definition {
 pub struct Binding {
     pub definition: Definition,
     pub command: String,
+    pub mode_instructions: Vec<ModeInstruction>,
 }
 impl Display for Binding {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Binding {} \u{2192} {}", self.definition, self.command)
+        write!(
+            f,
+            "Binding {} \u{2192} {} (mode instructions: {:?})",
+            self.definition, self.command, self.mode_instructions
+        )
     }
 }
 
@@ -312,8 +317,16 @@ fn mode_parser(pair: Pair<'_, Rule>) -> Result<Mode, ParseError> {
     Ok(mode)
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum ModeInstruction {
+    Enter(String),
+    Escape,
+}
+
 fn binding_parser(pair: Pair<'_, Rule>) -> Result<Vec<Binding>, ParseError> {
     let mut comm = vec![];
+    let mut mode_enters = vec![];
+    let mut mode_escapes = vec![];
     let mut uncompiled = DefinitionUncompiled::default();
     for component in pair.clone().into_inner() {
         match component.as_rule() {
@@ -325,6 +338,26 @@ fn binding_parser(pair: Pair<'_, Rule>) -> Result<Vec<Binding>, ParseError> {
                         }
                         Rule::command_shorthand => {
                             comm.push(parse_command_shorthand(subcomponent)?);
+                        }
+                        Rule::command_double_ampersand => {
+                            if comm
+                                .last()
+                                .is_some_and(|last| last.len() == 1 && last[0] == "&&")
+                            {
+                                continue;
+                            }
+                            comm.push(vec![pair_to_string(subcomponent)]);
+                        }
+                        Rule::enter_mode => {
+                            // Safety: the first element is guaranteed to be a modename
+                            // by the grammar.
+                            let modename = subcomponent.into_inner().next().unwrap();
+                            mode_enters.push(ModeInstruction::Enter(pair_to_string(modename)));
+                        }
+                        Rule::escape_mode => {
+                            if mode_enters.pop().is_none() {
+                                mode_escapes.push(ModeInstruction::Escape);
+                            }
                         }
                         _ => {}
                     }
@@ -361,6 +394,11 @@ fn binding_parser(pair: Pair<'_, Rule>) -> Result<Vec<Binding>, ParseError> {
         .map(|(definition, command)| Binding {
             definition,
             command,
+            mode_instructions: mode_enters
+                .iter()
+                .chain(mode_escapes.iter())
+                .cloned()
+                .collect(),
         })
         .collect();
     Ok(bindings)

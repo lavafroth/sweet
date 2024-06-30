@@ -27,7 +27,7 @@ Here's what has been worked on so far.
 - [x] Modes
   - [x] Oneoff
   - [x] Swallow
-  - [ ] `@mode` in commands (Grammar implemented)
+  - [x] `@mode` in commands
 - [x] Comments
 - [x] Imports
   - [x] Merge definitions from all imports

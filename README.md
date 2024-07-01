@@ -12,9 +12,7 @@ repository.
 
 As of now, the parser prints all the bindings that a given inputs file can expand to.
 
-### Progress
-
-Here's what has been worked on so far.
+### Roadmap
 
 - [x] Bindings
   - [x] Modifiers
@@ -37,7 +35,6 @@ Here's what has been worked on so far.
 ## Extra features
 - [x] Warn user if input config is not a regular file
 - [x] Set a maximum file size cap for configs
-- [ ] Lock files and map them into memory
 - [x] Map keys and modifiers to internal representation (evdev enum variants) in a single pass
 
 

@@ -980,6 +980,21 @@ fn test_homerow_special_keys_top() -> Result<(), ParseError> {
 }
 
 #[test]
+fn internal_commands_do_not_fail_variant_validation() {
+    let config = r#"
+alt + m
+    @enter music
+
+mode music
+q
+    @escape
+endmode
+"#;
+
+    assert!(SwhkdParser::from(ParserInput::Raw(&config)).is_ok());
+}
+
+#[test]
 fn test_all_alphanumeric() -> Result<(), ParseError> {
     let symbols: [&str; 36] = [
         "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r",

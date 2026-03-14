@@ -324,8 +324,9 @@ fn binding_parser(pair: Pair<'_, Rule>) -> Result<Vec<Binding>, ParseError> {
         .collect_vec();
     let bind_len = bind_cartesian_product.len();
     let command_len = command_cartesian_product.len();
+    let instructions_len = mode_enters.len() + mode_escapes.len();
 
-    if bind_len != command_len {
+    if bind_len != command_len && instructions_len == 0 {
         let err = pest::error::Error::new_from_span(
             pest::error::ErrorVariant::<Rule>::CustomError {
                 message: format!(

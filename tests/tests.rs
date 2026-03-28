@@ -1051,3 +1051,28 @@ fn test_all_alphanumeric() -> Result<(), ParseError> {
     assert_equal_binding_set(parsed.bindings, known);
     Ok(())
 }
+
+#[test]
+fn test_parse_asterisk_and_circumflex() -> Result<(), ParseError> {
+    let contents = "
+super + *
+    asterisk
+super + shift + ^
+    circumflex
+super + alt + asterisk
+    asterisk_word
+super + ctrl + asciicircum
+    circumflex_word
+    ";
+    let parsed = SwhkdParser::from(ParserInput::Raw(&contents))?;
+    
+    let known = vec![
+        Binding::running("asterisk").on(Definition::new(evdev::Key::KEY_8).with_modifiers(&[Super])),
+        Binding::running("circumflex").on(Definition::new(evdev::Key::KEY_6).with_modifiers(&[Super, Shift])),
+        Binding::running("asterisk_word").on(Definition::new(evdev::Key::KEY_8).with_modifiers(&[Super, Alt])),
+        Binding::running("circumflex_word").on(Definition::new(evdev::Key::KEY_6).with_modifiers(&[Super, Control])),
+    ];
+
+    assert_eq!(parsed.bindings, known);
+    Ok(())
+}
